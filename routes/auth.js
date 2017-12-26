@@ -1,9 +1,6 @@
 const express = require("express");
 const passport = require("passport");
-const request = require("request");
 const router = express.Router();
-const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
-const debug = require("debug")(process.env.NAMESPACE || "app");
 
 router.get("/status", function() {
   res.sendStatus(200);
@@ -12,12 +9,12 @@ router.get("/status", function() {
 router.get(
   "/login",
   passport.authenticate("auth0", {
-    clientID: process.env.CLIENT_ID,
-    domain: process.env.DOMAIN,
-    redirectUri: process.env.CALLBACK_URL,
-    audience: "https://" + process.env.DOMAIN + "/userinfo",
+    clientID: process.env.AUTH0_CLIENT_ID,
+    domain: process.env.AUTH0_DOMAIN,
+    redirectUri: process.env.AUTH0_CALLBACK_URL,
+    audience: "https://" + process.env.AUTH0_DOMAIN + "/userinfo",
     responseType: "code",
-    scope: "openid profile"
+    scope: process.env.AUTH0_SCOPE || "openid profile"
   }),
   function(req, res) {
     res.redirect("/");
@@ -46,18 +43,6 @@ router.get("/failure", function(req, res) {
   res.write("error: " + error[0] + "\n");
   res.write("error description: " + error_description[0]);
   res.send();
-});
-
-router.get("/*", ensureLoggedIn, function(req, res) {
-  const url = process.env.ORIGIN + req.url;
-  debug("Requested url is %s", url);
-  req.pipe(request(url)).pipe(res);
-});
-
-router.post("/*", ensureLoggedIn, function(req, res) {
-  const url = process.env.ORIGIN + req.url;
-  debug("Requested url is %s", url);
-  req.pipe(request(url)).pipe(res);
 });
 
 module.exports = router;
