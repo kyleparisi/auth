@@ -2,24 +2,13 @@ const express = require("express");
 const passport = require("passport");
 const router = express.Router();
 
-router.get("/status", function() {
+router.get("/status", function(req, res) {
   res.sendStatus(200);
 });
 
-router.get(
-  "/login",
-  passport.authenticate("auth0", {
-    clientID: process.env.AUTH0_CLIENT_ID,
-    domain: process.env.AUTH0_DOMAIN,
-    redirectUri: process.env.AUTH0_CALLBACK_URL,
-    audience: "https://" + process.env.AUTH0_DOMAIN + "/userinfo",
-    responseType: "code",
-    scope: process.env.AUTH0_SCOPE || "openid profile"
-  }),
-  function(req, res) {
-    res.redirect("/");
-  }
-);
+router.get("/login", passport.authenticate("auth0"), function(req, res) {
+  res.redirect("/");
+});
 
 router.get("/logout", function(req, res) {
   req.logout();
