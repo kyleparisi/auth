@@ -34,8 +34,7 @@
     },
     "AUTH0_CLIENT_SECRET": {
       "description": "Auth0 client_secret.",
-      "required": true,
-      "generator": "secret"
+      "required": true
     },
     "AUTH0_CALLBACK_URL": {
       "description": "Auth0 validated callback url.",
@@ -50,8 +49,7 @@
       "value": "memory"
     },
     "REDIS_HOST": {
-      "description": "Redis host for session storage.",
-      "generator": "secret"
+      "description": "Redis host for session storage."
     }
   },
   "keywords": ["node", "express", "auth"]
