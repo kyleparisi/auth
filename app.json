@@ -3,8 +3,7 @@
   "description": "A basic auth middleware",
   "env": {
     "ORIGIN": {
-      "description": "Host to proxy requests to after authentication.",
-      "required": true
+      "description": "Host to proxy requests to after authentication."
     },
     "SECRET": {
       "description":
@@ -25,20 +24,16 @@
     },
     "AUTH0_DOMAIN": {
       "description": "Auth0 authentication domain.",
-      "value": "example.auth0.com",
-      "required": true
+      "value": "example.auth0.com"
     },
     "AUTH0_CLIENT_ID": {
-      "description": "Auth0 client_id.",
-      "required": true
+      "description": "Auth0 client_id."
     },
     "AUTH0_CLIENT_SECRET": {
-      "description": "Auth0 client_secret.",
-      "required": true
+      "description": "Auth0 client_secret."
     },
     "AUTH0_CALLBACK_URL": {
-      "description": "Auth0 validated callback url.",
-      "required": true
+      "description": "Auth0 validated callback url."
     },
     "AUTH0_SCOPE": {
       "description": "Scope of authentication.",
@@ -49,7 +44,8 @@
       "value": "memory"
     },
     "REDIS_HOST": {
-      "description": "Redis host for session storage."
+      "description": "Redis host for session storage.",
+      "required": false
     }
   },
   "keywords": ["node", "express", "auth"]
