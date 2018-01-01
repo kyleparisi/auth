@@ -1,8 +1,8 @@
 const debug = require("debug")(process.env.NAMESPACE || "app");
 const express = require("express");
-const auth = require("./strategies/" + (process.env.AUTH_STRATEGY || "auth0"));
-const session = require("./sessions/" +
-  (process.env.SESSION_DRIVER || "memory"));
+const authStrategy = process.env.AUTH_STRATEGY || "auth0";
+debug("Using auth strategy: %s", authStrategy);
+const auth = require("./strategies/" + authStrategy);
 const routes = require("./routes/auth");
 const _404 = require("./handlers/404");
 const error = require("./handlers/error");
@@ -10,6 +10,9 @@ const flash = require("connect-flash");
 const failure = require("./handlers/failure");
 const proxy = require("http-proxy-middleware");
 const logProvider = require("./providers/log");
+const sessionDriver = process.env.SESSION_DRIVER || "memory";
+debug("Using session driver: %s", sessionDriver);
+const session = require("./sessions/" + sessionDriver);
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
 
 const app = express();
@@ -43,5 +46,5 @@ app.use(_404);
 app.use(error);
 
 const port = process.env.PORT || 3000;
-debug("Listening on port %s", port);
+debug("Listening on port: %s", port);
 app.listen(port);

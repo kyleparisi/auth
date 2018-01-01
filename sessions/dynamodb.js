@@ -19,5 +19,7 @@ var options = {
 };
 module.exports = session({
   store: new DynamoDBStore(options),
-  secret: process.env.SECRET
+  secret: process.env.SECRET,
+  resave: true,
+  saveUninitialized: true
 });
