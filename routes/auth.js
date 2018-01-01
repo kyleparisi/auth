@@ -1,13 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
-
-function nocache(req, res, next) {
-  res.header("Cache-Control", "private, no-cache, no-store, must-revalidate");
-  res.header("Expires", "-1");
-  res.header("Pragma", "no-cache");
-  next();
-}
+const nocache = require("./nocache");
 
 router.get("/status", nocache, function(req, res) {
   res.sendStatus(200);
