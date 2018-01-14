@@ -15,6 +15,10 @@ const logProvider = require("./providers/log");
 const sessionDriver = process.env.SESSION_DRIVER || "memory";
 debug("Using session driver: %s", sessionDriver);
 const session = require("./sessions/" + sessionDriver);
+const audience = process.env.AUTH0_AUDIENCE || null;
+audience
+  ? debug("Authenticating for auth0 audience: " + audience)
+  : debug("No authenticated auth0 audience");
 const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
 
 const app = express();
@@ -31,9 +35,20 @@ app.use(strategy.session());
 
 app.use("/", routesAuth);
 app.use("/api", routesApiUser);
+
+function addHeader(req, res, next) {
+  debug(req.user.token_type + " " + req.user.access_token);
+  if (audience && req.user && req.user.token_type && req.user.access_token) {
+    req.headers["Authorization"] =
+      req.user.token_type + " " + req.user.access_token;
+  }
+  next();
+}
+
 app.use(
   "/*",
   ensureLoggedIn,
+  addHeader,
   proxy({
     target: process.env.ORIGIN,
     changeOrigin: true,

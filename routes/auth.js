@@ -7,12 +7,15 @@ router.get("/status", nocache, function(req, res) {
   res.sendStatus(200);
 });
 
-router.get("/login", nocache, passport.authenticate("auth0"), function(
-  req,
-  res
-) {
-  res.redirect("/");
-});
+const audience = { audience: process.env.AUTH0_AUDIENCE } || null;
+router.get(
+  "/login",
+  nocache,
+  passport.authenticate("auth0", audience),
+  function(req, res) {
+    res.redirect("/");
+  }
+);
 
 router.get("/logout", nocache, function(req, res) {
   req.logout();
