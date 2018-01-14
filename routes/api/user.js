@@ -7,4 +7,8 @@ router.get("/user", ensureLoggedIn, nocache, function(req, res) {
   res.send(req.user);
 });
 
+router.get("/user/id", ensureLoggedIn, nocache, function(req, res) {
+  res.send(req.user._json.sub);
+});
+
 module.exports = router;
