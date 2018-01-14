@@ -9,10 +9,10 @@ module.exports = function() {
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
       callbackURL: process.env.AUTH0_CALLBACK_URL,
       successReturnToOrRedirect: process.env.SUCCESS_RETURN_TO || "/",
-      scope: process.env.AUTH0_SCOPE || "openid profile"
+      scope: process.env.AUTH0_SCOPE || "openid"
     },
     function(accessToken, refreshToken, extraParams, profile, done) {
-      return done(null, profile);
+      return done(null, Object.assign({}, extraParams, profile));
     }
   );
 
