@@ -3,7 +3,7 @@ const RedisStore = require("connect-redis")(session);
 
 module.exports = session({
   store: new RedisStore({
-    host: process.env.REDIS_HOST || "localhost"
+    host: process.env.REDIS_HOST
   }),
   secret: process.env.SECRET,
   resave: true,

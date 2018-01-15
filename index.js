@@ -1,7 +1,7 @@
-const debug = require("debug")(process.env.NAMESPACE || "app");
+const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 global.debug = debug;
 const express = require("express");
-const authStrategy = process.env.AUTH_STRATEGY || "auth0";
+const authStrategy = process.env.AUTH_STRATEGY;
 debug("Using auth strategy: %s", authStrategy);
 const auth = require("./strategies/" + authStrategy);
 const routesAuth = require("./routes/auth");
@@ -12,10 +12,10 @@ const flash = require("connect-flash");
 const failure = require("./handlers/failure");
 const proxy = require("http-proxy-middleware");
 const logProvider = require("./providers/log");
-const sessionDriver = process.env.SESSION_DRIVER || "memory";
+const sessionDriver = process.env.SESSION_DRIVER;
 debug("Using session driver: %s", sessionDriver);
 const session = require("./sessions/" + sessionDriver);
-const audience = process.env.AUTH0_AUDIENCE || null;
+const audience = process.env.AUTH0_AUDIENCE;
 audience
   ? debug("Authenticating for auth0 audience: " + audience)
   : debug("No authenticated auth0 audience");
@@ -63,6 +63,6 @@ app.use(
 app.use(_404);
 app.use(error);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 debug("Listening on port: %s", port);
 app.listen(port);

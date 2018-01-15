@@ -7,11 +7,10 @@ router.get("/status", nocache, function(req, res) {
   res.sendStatus(200);
 });
 
-const audience = { audience: process.env.AUTH0_AUDIENCE } || null;
 router.get(
   "/login",
   nocache,
-  passport.authenticate("auth0", audience),
+  passport.authenticate("auth0", { audience: process.env.AUTH0_AUDIENCE }),
   function(req, res) {
     res.redirect("/");
   }

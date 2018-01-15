@@ -8,8 +8,8 @@ module.exports = function() {
       clientID: process.env.AUTH0_CLIENT_ID,
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
       callbackURL: process.env.AUTH0_CALLBACK_URL,
-      successReturnToOrRedirect: process.env.SUCCESS_RETURN_TO || "/",
-      scope: process.env.AUTH0_SCOPE || "openid"
+      successReturnToOrRedirect: process.env.SUCCESS_RETURN_TO,
+      scope: process.env.AUTH0_SCOPE
     },
     function(accessToken, refreshToken, extraParams, profile, done) {
       return done(null, Object.assign({}, extraParams, profile));
