@@ -1,0 +1,13 @@
+{
+  "name": "auth",
+  "description": "Auth proxy service",
+  "environment": {
+    "SUCCESS_RETURN_TO": "/",
+    "DEBUG_NAMESPACE": "app",
+    "DEBUG": "app*",
+    "AUTH_STRATEGY": "auth0",
+    "AUTH0_SCOPE": "openid profile",
+    "SESSION_DRIVER": "dynamodb"
+  },
+  "profile": "default"
+}

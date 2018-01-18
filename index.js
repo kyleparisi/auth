@@ -2,7 +2,6 @@ const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 global.debug = debug;
 const express = require("express");
 const authStrategy = process.env.AUTH_STRATEGY;
-debug("Using auth strategy: %s", authStrategy);
 const auth = require("./strategies/" + authStrategy);
 const routesAuth = require("./routes/auth");
 const routesApiUser = require("./routes/api/user");
@@ -10,34 +9,58 @@ const _404 = require("./handlers/404");
 const error = require("./handlers/error");
 const flash = require("connect-flash");
 const failure = require("./handlers/failure");
-const proxy = require("http-proxy-middleware");
-const logProvider = require("./providers/log");
 const sessionDriver = process.env.SESSION_DRIVER;
-debug("Using session driver: %s", sessionDriver);
 const session = require("./sessions/" + sessionDriver);
 const audience = process.env.AUTH0_AUDIENCE;
+const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
+const bodyParser = require("body-parser");
+const stream = require("stream");
+const proxiesAws = require("./proxies/aws");
+const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
+
+var proxy = "./proxies/standard";
+if (originIsAwsDomain) {
+  proxy = "./proxies/aws";
+}
+
+debug("Using proxy: %s", proxy.replace("./", ""));
+debug("Using auth strategy: %s", authStrategy);
+debug("Using session driver: %s", sessionDriver);
 audience
   ? debug("Authenticating for auth0 audience: " + audience)
   : debug("No authenticated auth0 audience");
-const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
+debug("Listening on port: %s", process.env.PORT);
 
+proxy = require(proxy);
+const strategy = auth();
 const app = express();
 
 app.use(session);
-
 app.use(flash());
-
 app.use(failure);
-
-const strategy = auth();
+app.use(
+  bodyParser.raw({
+    type: function() {
+      return true;
+    }
+  })
+);
+if (originIsAwsDomain) app.use(proxiesAws.getCredentials);
 app.use(strategy.initialize());
 app.use(strategy.session());
-
 app.use("/", routesAuth);
 app.use("/api", routesApiUser);
+app.use(function(req, res, next) {
+  if (Buffer.isBuffer(req.body)) {
+    var bufferStream = new stream.PassThrough();
+    bufferStream.end(req.body);
+    req.bufferStream = bufferStream;
+  }
+
+  next();
+});
 
 function addHeader(req, res, next) {
-  debug(req.user.token_type + " " + req.user.access_token);
   if (audience && req.user && req.user.token_type && req.user.access_token) {
     req.headers["Authorization"] =
       req.user.token_type + " " + req.user.access_token;
@@ -45,24 +68,10 @@ function addHeader(req, res, next) {
   next();
 }
 
-app.use(
-  "/*",
-  ensureLoggedIn,
-  addHeader,
-  proxy({
-    target: process.env.ORIGIN,
-    changeOrigin: true,
-    ws: true,
-    logLevel: process.env.LOG_LEVEL,
-    logProvider: logProvider,
-    onError: error
-  })
-);
+app.use("/*", ensureLoggedIn, addHeader, proxy.proxy);
 
 // # Error handlers
 app.use(_404);
 app.use(error);
 
-const port = process.env.PORT;
-debug("Listening on port: %s", port);
-app.listen(port);
+app.listen(process.env.PORT);

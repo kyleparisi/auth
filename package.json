@@ -4,6 +4,8 @@
   "description": "A simple auth middleware server.",
   "main": "index.js",
   "dependencies": {
+    "aws-sdk": "^2.183.0",
+    "body-parser": "^1.18.2",
     "connect-dynamodb": "^2.0.0",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
