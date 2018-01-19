@@ -16,7 +16,6 @@ const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
 const bodyParser = require("body-parser");
 const stream = require("stream");
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
-const trimPath = process.env.TRIM_PATH;
 
 var proxy = "./proxies/standard";
 if (originIsAwsDomain) {
@@ -26,7 +25,6 @@ if (originIsAwsDomain) {
 debug("Using proxy: %s", proxy.replace("./", ""));
 debug("Using auth strategy: %s", authStrategy);
 debug("Using session driver: %s", sessionDriver);
-debug("Removing from request paths: %s", trimPath);
 audience
   ? debug("Authenticating for auth0 audience: " + audience)
   : debug("No authenticated auth0 audience");
@@ -58,14 +56,6 @@ app.use(function(req, res, next) {
     req.bufferStream = bufferStream;
   }
 
-  next();
-});
-
-app.use(function(req, res, next) {
-  var newPath = req.path.replace(trimPath, "");
-  if (newPath.search("/") !== 0) newPath = "/";
-  debug("Trimming path %s to be %s", req.path, newPath);
-  req.path = newPath;
   next();
 });
 
