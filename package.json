@@ -20,16 +20,13 @@
   },
   "devDependencies": {
     "husky": "^0.14.3",
-    "lint-staged": "^6.0.0",
-    "prettier": "1.9.2"
-  },
-  "lint-staged": {
-    "*.{js,json,css,md}": ["prettier --write", "git add"]
+    "prettier": "1.9.2",
+    "pretty-quick": "^1.2.2"
   },
   "scripts": {
-    "precommit": "lint-staged",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node -r ./config/env index.js"
+    "start": "node -r ./config/env index.js",
+    "precommit": "pretty-quick --staged"
   },
   "author": "Kyle Parisi (http://blog.kyleparisi.com)",
   "license": "ISC"
