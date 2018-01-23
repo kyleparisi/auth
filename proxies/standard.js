@@ -10,7 +10,11 @@ exports.proxy = function(req, res, next) {
     buffer: req.bufferStream,
     logLevel: process.env.LOG_LEVEL,
     logProvider: logProvider,
-    onError: error
+    onError: error,
+    onProxyRes: function(proxyRes, req, res) {
+      res.proxyRes = proxyRes;
+      next();
+    }
   });
 
   return upstream(req, res, next);
