@@ -24,7 +24,7 @@ debug("Using proxy: %s", proxy.replace("./", ""));
 debug("Using auth strategy: %s", authStrategy);
 debug("Using session driver: %s", sessionDriver);
 audience
-  ? debug("Authenticating for auth0 audience: " + audience)
+  ? debug("Authenticating for auth0 audience: %s", audience)
   : debug("No authenticated auth0 audience");
 debug("Listening on port: %s", process.env.PORT);
 
