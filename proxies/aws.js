@@ -51,6 +51,10 @@ exports.proxy = function(req, res, next) {
           "x-amz-security-token",
           request.headers["x-amz-security-token"]
         );
+    },
+    onProxyRes: function(proxyRes, req, res) {
+      res.proxyRes = proxyRes;
+      next();
     }
   });
 
