@@ -15,6 +15,11 @@ const bodyParser = require("body-parser");
 const stream = require("stream");
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
 
+var hook = function() {};
+if (process.env.HOOK_NAME) {
+  hook = require("./hooks/" + process.env.HOOK_NAME);
+}
+
 var proxy = "./proxies/standard";
 if (originIsAwsDomain) {
   proxy = "./proxies/aws";
@@ -68,6 +73,6 @@ function addHeader(req, res, next) {
   next();
 }
 
-app.use("/*", ensureLoggedIn, addHeader, proxy.proxy);
+app.use("/*", ensureLoggedIn, addHeader, proxy.proxy, hook);
 
 app.listen(process.env.PORT);

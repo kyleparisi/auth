@@ -4,24 +4,26 @@
   "description": "A simple auth middleware server.",
   "main": "index.js",
   "dependencies": {
-    "aws-sdk": "^2.183.0",
+    "aws-sdk": "^2.188.0",
     "body-parser": "^1.18.2",
     "connect-dynamodb": "^2.0.0",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
-    "connect-redis": "^3.3.2",
+    "connect-redis": "^3.3.3",
     "debug": "^3.1.0",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "http-proxy-middleware": "^0.17.4",
+    "identity": "github:kyleparisi/identity",
     "passport": "^0.4.0",
-    "passport-auth0": "^0.6.0"
+    "passport-auth0": "^0.6.1",
+    "track": "github:kyleparisi/track"
   },
   "devDependencies": {
     "husky": "^0.14.3",
     "prettier": "1.9.2",
-    "pretty-quick": "^1.2.2"
+    "pretty-quick": "^1.2.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
