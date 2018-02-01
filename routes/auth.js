@@ -18,7 +18,7 @@ router.get(
 
 router.get("/logout", nocache, function(req, res) {
   req.logout();
-  res.redirect("/");
+  res.redirect(process.env.AUTH0_DOMAIN + "/v2/logout");
 });
 
 router.get(
