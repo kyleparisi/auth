@@ -67,6 +67,7 @@ app.use(function(req, res, next) {
 });
 
 function addHeader(req, res, next) {
+  if (res.headersSent) return next();
   if (audience && req.user && req.user.token_type && req.user.access_token) {
     req.headers["Authorization"] =
       req.user.token_type + " " + req.user.access_token;

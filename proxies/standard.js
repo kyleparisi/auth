@@ -4,6 +4,8 @@ const error = require("../handlers/error");
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 
 exports.proxy = function(req, res, next) {
+  if (res.headersSent) return next();
+
   const targets = {
     // [regex]: target
     rules: {},

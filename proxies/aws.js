@@ -19,6 +19,7 @@ exports.getCredentials = function(req, res, next) {
 };
 
 exports.proxy = function(req, res, next) {
+  if (res.headersSent) return next();
   const ORIGIN = url.parse(process.env.ORIGIN).hostname;
 
   const upstream = proxy({
