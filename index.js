@@ -4,6 +4,7 @@ const express = require("express");
 const authStrategy = process.env.AUTH_STRATEGY;
 const auth = require("./strategies/" + authStrategy);
 const routesAuth = require("./routes/auth");
+const routesGoogle = require("./routes/google");
 const routesApiUser = require("./routes/api/user");
 const flash = require("connect-flash");
 const failure = require("./handlers/failure");
@@ -53,7 +54,7 @@ app.use(
 if (originIsAwsDomain) app.use(proxy.getCredentials);
 app.use(strategy.initialize());
 app.use(strategy.session());
-app.use("/", routesAuth);
+app.use("/", routesAuth, routesGoogle);
 app.use("/api", routesApiUser);
 app.use(function(req, res, next) {
   if (Buffer.isBuffer(req.body)) {

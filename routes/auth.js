@@ -1,5 +1,4 @@
 const express = require("express");
-const passport = require("passport");
 const router = express.Router();
 const nocache = require("./nocache");
 
@@ -7,29 +6,14 @@ router.get("/status", nocache, function(req, res) {
   res.sendStatus(200);
 });
 
-router.get(
-  "/login",
-  nocache,
-  passport.authenticate("auth0", { audience: process.env.AUTH0_AUDIENCE }),
-  function(req, res) {
-    res.redirect("/");
-  }
-);
+router.get("/login", nocache, function(req, res) {
+  res.end("No auth strategy configured.");
+});
 
 router.get("/logout", nocache, function(req, res) {
   req.logout();
-  res.redirect(process.env.AUTH0_DOMAIN + "/v2/logout");
+  res.redirect("/");
 });
-
-router.get(
-  "/callback",
-  passport.authenticate("auth0", {
-    failureRedirect: "/failure"
-  }),
-  function(req, res) {
-    res.redirect(req.session.returnTo || "/");
-  }
-);
 
 router.get("/failure", nocache, function(req, res) {
   var error = req.flash("error");
