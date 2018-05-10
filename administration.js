@@ -33,6 +33,4 @@ app.post("/origins/save", (req, res) => {
   res.redirect("/");
 });
 
-app.listen(3001, "localhost", () =>
-  console.log("Admin dashboard listening on port http://localhost:3001!")
-);
+app.listen(3001, () => console.log("Admin dashboard listening on port 3001!"));
