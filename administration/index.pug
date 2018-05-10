@@ -1,0 +1,23 @@
+extends layout
+
+block content
+    .main.container
+        .row
+            h1 Auth Administration
+        .row
+            .col-md-6.col-md-offset-3
+                h3.display-4.m-b-2 Settings
+
+                // register form
+                form(method='POST' action='/origins/save')
+                    div.form-group
+                        label(for='regex_key') Regex key:
+                        input#regex_key.form-control(type='text', placeholder='localhost' name='regex_key')
+                    h4 Domain or IP
+                    div.form-group
+                        label(for='domain') Domain:
+                        input#domain.form-control(type='text', placeholder='google.com' name='domain')
+                    div.form-group
+                        label(for='ip') IP:
+                        input#ip.form-control(type='text', placeholder='127.0.0.1' name='ip')
+                    button.btn.btn-primary(type='submit') Sign up

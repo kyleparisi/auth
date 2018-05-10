@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    .main.container
+        .row
+            h1 Origins
+        .row
+            .col-md-6.col-md-offset-3
+                ul
+                    each val, index in origins
+                        - var origin = val.domain || val.ip;
+                        li= index + ': ' + origin

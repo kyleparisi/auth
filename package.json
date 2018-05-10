@@ -5,7 +5,6 @@
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.232.1",
-    "body-parser": "^1.18.2",
     "connect-dynamodb": "^2.0.0",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
@@ -19,16 +18,21 @@
     "passport": "^0.4.0",
     "passport-auth0": "^0.6.1",
     "passport-google-oauth": "^1.0.0",
+    "ramda": "^0.25.0",
     "track": "github:kyleparisi/track"
   },
   "devDependencies": {
+    "body-parser": "^1.18.2",
     "husky": "^0.14.3",
+    "lowdb": "^1.0.0",
     "prettier": "1.9.2",
-    "pretty-quick": "^1.4.1"
+    "pretty-quick": "^1.4.1",
+    "pug": "^2.0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r ./config/env index.js",
+    "start:admin": "node administration.js",
     "precommit": "pretty-quick --staged"
   },
   "author": "Kyle Parisi (http://blog.kyleparisi.com)",

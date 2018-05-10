@@ -1,4 +1,10 @@
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
+try {
+  require("./storage/db.json");
+} catch ($err) {
+  debug("Please run administration first");
+  process.exit(1);
+}
 global.debug = debug;
 const express = require("express");
 const authStrategy = process.env.AUTH_STRATEGY;
@@ -16,17 +22,13 @@ const bodyParser = require("body-parser");
 const stream = require("stream");
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
 
-var hook = function() {};
+let hook = function() {};
 if (process.env.HOOK_NAME) {
   hook = require("./hooks/" + process.env.HOOK_NAME);
 }
 
-var proxy = "./proxies/standard";
-if (originIsAwsDomain) {
-  proxy = "./proxies/aws";
-}
+let proxy = require("./proxies/standard");
 
-debug("Using proxy: %s", proxy.replace("./", ""));
 debug("Using auth strategy: %s", authStrategy);
 debug("Using session driver: %s", sessionDriver);
 audience
@@ -34,7 +36,6 @@ audience
   : debug("No authenticated auth0 audience");
 debug("Listening on port: %s", process.env.PORT);
 
-proxy = require(proxy);
 const strategy = auth();
 const app = express();
 app.use(function(req, res, next) {
@@ -58,7 +59,7 @@ app.use("/", routesAuth, routesGoogle);
 app.use("/api", routesApiUser);
 app.use(function(req, res, next) {
   if (Buffer.isBuffer(req.body)) {
-    var bufferStream = new stream.PassThrough();
+    let bufferStream = new stream.PassThrough();
     bufferStream.end(req.body);
     req.bufferStream = bufferStream;
   }
@@ -75,6 +76,6 @@ function addHeader(req, res, next) {
   next();
 }
 
-app.use("/*", ensureLoggedIn, addHeader, proxy.proxy, hook);
+app.use("/*", addHeader, proxy, hook);
 
 app.listen(process.env.PORT);
