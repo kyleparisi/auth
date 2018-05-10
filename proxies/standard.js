@@ -2,7 +2,6 @@ const proxy = require("http-proxy-middleware");
 const logProvider = require("../providers/log");
 const error = require("../handlers/error");
 const findOrigin = require("../origins/index");
-const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
