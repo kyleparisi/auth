@@ -36,7 +36,7 @@ module.exports = function(req) {
   if (ip) {
     let origin = "http://" + ip;
     debug("Using origin: %s", origin);
-    return;
+    return origin;
   }
 
   const domain = R.path([host, "domain"], originCache);
