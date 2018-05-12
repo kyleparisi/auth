@@ -13,6 +13,7 @@ block content
                     div.form-group
                         label(for='regex_key') Regex key:
                         input#regex_key.form-control(type='text', placeholder='localhost' name='regex_key')
+
                     h4 Domain or IP
                     div.form-group
                         label(for='domain') Domain:
@@ -20,4 +21,17 @@ block content
                     div.form-group
                         label(for='ip') IP:
                         input#ip.form-control(type='text', placeholder='127.0.0.1' name='ip')
+
+                    h4 Headers
+                    div.form-group
+                        span key
+                        input.headers.form-control(type='text', placeholder='REMOTE_USER_GROUPS' name='headers[]')
+                        span value
+                        input.headers.form-control(type='text', placeholder='admin:user' name='headers[]')
+
+                        span key
+                        input.headers.form-control(type='text', placeholder='REMOTE_USER' name='headers[]')
+                        span value
+                        input.headers.form-control(type='text', placeholder='admin' name='headers[]')
+
                     button.btn.btn-primary(type='submit') Sign up

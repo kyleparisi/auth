@@ -27,8 +27,8 @@ app.get("/origins", (req, res) => {
 });
 
 app.post("/origins/save", (req, res) => {
-  const { regex_key, domain, ip } = req.body;
-  db.set(`origins.["${regex_key}"]`, { domain, ip }).write();
+  const { regex_key, domain, ip, headers } = req.body;
+  db.set(`origins.["${regex_key}"]`, { domain, ip, headers }).write();
   console.log(req.body);
   res.redirect("/");
 });

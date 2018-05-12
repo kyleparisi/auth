@@ -1,33 +1,44 @@
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 const R = require("ramda");
-const origins = require("../storage/db.json").origins;
-const rules = Object.keys(origins);
-const originCache = {};
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+const addHeaders = require("../origins/addHeaders");
+const path = require("path");
 
-debug("Rules available: %s", rules);
+const originCache = {};
+const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
+const db = low(adapter);
 
 module.exports = function(req) {
   const host = req.headers["host"];
+  const origins = db.get("origins").value();
+  const rules = Object.keys(origins);
+
   debug("Finding origin based on host: %s", host);
+  debug("Rules available: %s", rules);
+
+  let origin = false;
+  let rule = false;
 
   if (originCache[host]) {
     debug("Using cached host: %j", originCache[host]);
     if (originCache[host].ip) {
-      return "http://" + originCache[host].ip;
+      origin = "http://" + originCache[host].ip;
     }
 
     if (originCache[host].domain) {
-      return "https://" + originCache[host].domain;
+      origin = "https://" + originCache[host].domain;
     }
   }
 
-  for (var i = 0; i < rules.length; i++) {
+  for (let i = 0; i < rules.length; i++) {
     const regExp = new RegExp(rules[i]);
     debug("Checking regex for: ", rules[i]);
     debug(regExp);
     if (host.match(regExp)) {
       debug("Found match: %s", rules[i]);
       originCache[host] = origins[rules[i]];
+      rule = originCache[host];
       break;
     }
   }
@@ -36,16 +47,20 @@ module.exports = function(req) {
   if (ip) {
     let origin = "http://" + ip;
     debug("Using origin: %s", origin);
-    return origin;
   }
 
   const domain = R.path([host, "domain"], originCache);
   if (domain) {
     let origin = "https://" + domain;
     debug("Using origin: %s", origin);
-    return origin;
   }
 
-  debug("No origin found");
-  return false;
+  if (!origin) {
+    debug("No origin found");
+    return false;
+  }
+
+  addHeaders(req, rule);
+
+  return origin;
 };
