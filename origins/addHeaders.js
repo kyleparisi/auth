@@ -1,7 +1,10 @@
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 
 module.exports = function(req, origin) {
-  if (!origin.headers.length) return false;
+  if (!origin.headers.length) {
+    debug("No headers found for domain");
+    return false;
+  }
 
   origin.headers.forEach(function(item, index) {
     if (index % 2 === 0) {
