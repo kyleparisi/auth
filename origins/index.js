@@ -18,7 +18,6 @@ module.exports = function(req) {
   debug("Rules available: %s", rules);
 
   let origin = false;
-  let rule = false;
 
   if (originCache[host]) {
     debug("Using cached host: %j", originCache[host]);
@@ -39,7 +38,6 @@ module.exports = function(req) {
       if (host.match(regExp)) {
         debug("Found match: %s", rules[i]);
         originCache[host] = origins[rules[i]];
-        rule = originCache[host];
         break;
       }
     }
@@ -62,7 +60,7 @@ module.exports = function(req) {
     return false;
   }
 
-  addHeaders(req, rule);
+  addHeaders(req, originCache[host]);
 
   return origin;
 };
