@@ -31,28 +31,30 @@ module.exports = function(req) {
     }
   }
 
-  for (let i = 0; i < rules.length; i++) {
-    const regExp = new RegExp(rules[i]);
-    debug("Checking regex for: ", rules[i]);
-    debug(regExp);
-    if (host.match(regExp)) {
-      debug("Found match: %s", rules[i]);
-      originCache[host] = origins[rules[i]];
-      rule = originCache[host];
-      break;
+  if (!origin) {
+    for (let i = 0; i < rules.length; i++) {
+      const regExp = new RegExp(rules[i]);
+      debug("Checking regex for: ", rules[i]);
+      debug(regExp);
+      if (host.match(regExp)) {
+        debug("Found match: %s", rules[i]);
+        originCache[host] = origins[rules[i]];
+        rule = originCache[host];
+        break;
+      }
     }
-  }
 
-  const ip = R.path([host, "ip"], originCache);
-  if (ip) {
-    let origin = "http://" + ip;
-    debug("Using origin: %s", origin);
-  }
+    const ip = R.path([host, "ip"], originCache);
+    if (ip) {
+      origin = "http://" + ip;
+      debug("Using origin: %s", origin);
+    }
 
-  const domain = R.path([host, "domain"], originCache);
-  if (domain) {
-    let origin = "https://" + domain;
-    debug("Using origin: %s", origin);
+    const domain = R.path([host, "domain"], originCache);
+    if (domain) {
+      origin = "https://" + domain;
+      debug("Using origin: %s", origin);
+    }
   }
 
   if (!origin) {
