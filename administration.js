@@ -27,8 +27,14 @@ app.get("/origins", (req, res) => {
 });
 
 app.post("/origins/save", (req, res) => {
-  const { regex_key, domain, ip, headers } = req.body;
-  db.set(`origins.["${regex_key}"]`, { domain, ip, headers }).write();
+  const { regex_key, domain, ip, guard_emails } = req.body;
+  let { headers } = req.body;
+
+  headers = headers.filter(header => (header ? header : false));
+
+  db
+    .set(`origins.["${regex_key}"]`, { domain, ip, headers, guard_emails })
+    .write();
   console.log(req.body);
   res.redirect("/");
 });
