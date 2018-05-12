@@ -2,7 +2,7 @@ const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 const R = require("ramda");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
-const addHeaders = require("../origins/addHeaders");
+const addHeaders = require("./addHeaders");
 const path = require("path");
 
 const originCache = {};
