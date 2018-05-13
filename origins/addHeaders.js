@@ -1,7 +1,9 @@
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 
 module.exports = function(req, origin) {
-  if (!origin.headers.length) {
+  const { headers } = origin;
+
+  if (!headers) {
     debug("No headers found for domain");
     return false;
   }
