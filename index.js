@@ -1,3 +1,4 @@
+require("./config/env");
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 try {
   require("./storage/db.json");

@@ -4,7 +4,6 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const addHeaders = require("./addHeaders");
 const path = require("path");
-const guards = require("./guards/index");
 const ensureLoggedIn = require("connect-ensure-login");
 
 const originCache = {};
