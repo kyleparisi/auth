@@ -3,7 +3,7 @@ require 'json'
 namespace :pm2 do
 
   def app_status
-    within current_path do
+    within deploy_to do
       ps = JSON.parse(capture :pm2, :jlist, fetch(:app_command))
       if ps.empty?
         return nil
@@ -15,13 +15,13 @@ namespace :pm2 do
   end
 
   def restart_app
-    within current_path do
+    within deploy_to do
       execute :pm2, :restart, fetch(:app_command)
     end
   end
 
   def start_app
-    within current_path do
+    within deploy_to do
       execute :pm2, :start, fetch(:app_command)
     end
   end

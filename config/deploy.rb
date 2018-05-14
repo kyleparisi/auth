@@ -3,7 +3,7 @@ lock "~> 3.10.2"
 
 set :application, "auth"
 set :repo_url, "git@github.com:kyleparisi/auth.git"
-set :app_command, "start npm -- start"
+set :app_command, "current/pm2.json"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -40,3 +40,13 @@ append :linked_dirs, "storage"
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
 set :ssh_options, { :forward_agent => true }
+
+namespace :deploy do
+
+  desc 'Restart application'
+  task :restart do
+    invoke 'pm2:restart'
+  end
+
+  after :publishing, :restart
+end
