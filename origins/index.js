@@ -76,6 +76,7 @@ module.exports = function(req, res, next) {
 
   const guard = originCache[host].guard;
   if (guard && Object.keys(guard).length) {
+    debug("Using guard strategy: %s", guard.strategy);
     ensureLoggedIn.ensureLoggedIn({ redirectTo: "/auth/" + guard.strategy })(
       req,
       res,
@@ -86,8 +87,12 @@ module.exports = function(req, res, next) {
     emails = emails.map(email => email.value);
     const match = emails.diff(guard.emails);
     if (!match.length) {
+      debug("No guard match found for user: %s", emails);
       res.send(401, "Route guarded.  Unauthorized.");
+      return false;
     }
+
+    debug("User guard match found: %s", emails);
   }
 
   return origin;
