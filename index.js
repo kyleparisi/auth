@@ -19,7 +19,6 @@ const session = require("./sessions/" + sessionDriver);
 const audience = process.env.AUTH0_AUDIENCE;
 const bodyParser = require("body-parser");
 const stream = require("stream");
-const Ddos = require("ddos");
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
 
 let hook = function() {};
@@ -37,9 +36,7 @@ audience
 debug("Listening on port: %s", process.env.PORT);
 
 const strategy = auth();
-const ddos = new Ddos();
 const app = express();
-app.use(ddos.express);
 app.use(function(req, res, next) {
   req.start = new Date().toString();
   next();
