@@ -4,12 +4,24 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const addHeaders = require("./addHeaders");
 const path = require("path");
+const guards = require("./guards/index");
+const ensureLoggedIn = require("connect-ensure-login");
 
 const originCache = {};
 const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
 const db = low(adapter);
 
-module.exports = function(req) {
+Array.prototype.diff = function(arr2) {
+  var ret = [];
+  for (var i in this) {
+    if (arr2.indexOf(this[i]) > -1) {
+      ret.push(this[i]);
+    }
+  }
+  return ret;
+};
+
+module.exports = function(req, res, next) {
   const host = req.headers["host"];
   const origins = db.get("origins").value();
   const rules = Object.keys(origins);
@@ -61,6 +73,22 @@ module.exports = function(req) {
   }
 
   addHeaders(req, originCache[host]);
+
+  const guard = originCache[host].guard;
+  if (guard && Object.keys(guard).length) {
+    ensureLoggedIn.ensureLoggedIn({ redirectTo: "/auth/" + guard.strategy })(
+      req,
+      res,
+      next
+    );
+
+    let { emails } = req.user;
+    emails = emails.map(email => email.value);
+    const match = emails.diff(guard.emails);
+    if (!match.length) {
+      res.send(401, "Route guarded.  Unauthorized.");
+    }
+  }
 
   return origin;
 };

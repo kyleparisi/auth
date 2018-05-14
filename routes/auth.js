@@ -12,7 +12,7 @@ router.get("/login", nocache, function(req, res) {
 
 router.get("/logout", nocache, function(req, res) {
   req.logout();
-  res.redirect("/");
+  res.redirect("/login");
 });
 
 router.get("/failure", nocache, function(req, res) {

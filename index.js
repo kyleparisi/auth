@@ -17,7 +17,6 @@ const failure = require("./handlers/failure");
 const sessionDriver = process.env.SESSION_DRIVER;
 const session = require("./sessions/" + sessionDriver);
 const audience = process.env.AUTH0_AUDIENCE;
-const ensureLoggedIn = require("connect-ensure-login").ensureLoggedIn();
 const bodyParser = require("body-parser");
 const stream = require("stream");
 const Ddos = require("ddos");

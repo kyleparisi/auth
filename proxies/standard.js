@@ -6,8 +6,12 @@ const findOrigin = require("../origins/index");
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 
+  const target = findOrigin(req, res, next);
+
+  if (res.headersSent) return next();
+
   const upstream = proxy({
-    target: findOrigin(req),
+    target,
     changeOrigin: true,
     ws: true,
     buffer: req.bufferStream,

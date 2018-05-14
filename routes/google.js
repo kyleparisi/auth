@@ -7,7 +7,7 @@ router.get(
   "/auth/google",
   nocache,
   passport.authenticate("google", {
-    scope: ["https://www.googleapis.com/auth/plus.login"]
+    scope: ["https://www.googleapis.com/auth/plus.login", "email"]
   })
 );
 
