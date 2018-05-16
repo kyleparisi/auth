@@ -8,7 +8,7 @@ try {
 }
 global.debug = debug;
 const express = require("express");
-const authStrategy = process.env.AUTH_STRATEGY;
+const authStrategy = "google";
 const auth = require("./strategies/" + authStrategy);
 const routesAuth = require("./routes/auth");
 const routesGoogle = require("./routes/google");
@@ -24,6 +24,7 @@ const findOrigin = require("./origins/index");
 const addHeaders = require("./origins/addHeaders");
 const guards = require("./origins/guards/index");
 const ensureLoggedIn = require("./origins/guards/ensureLoggedIn");
+const proxy = require("./proxies/standard");
 
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
 
@@ -31,8 +32,6 @@ let hook = function() {};
 if (process.env.HOOK_NAME) {
   hook = require("./hooks/" + process.env.HOOK_NAME);
 }
-
-let proxy = require("./proxies/standard");
 
 debug("Using auth strategy: %s", authStrategy);
 debug("Using session driver: %s", sessionDriver);
