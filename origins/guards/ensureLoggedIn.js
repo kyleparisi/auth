@@ -1,3 +1,5 @@
+const ensureLoggedIn = require("ensureLoggedIn");
+
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 
