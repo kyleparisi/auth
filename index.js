@@ -20,6 +20,11 @@ const session = require("./sessions/" + sessionDriver);
 const audience = process.env.AUTH0_AUDIENCE;
 const bodyParser = require("body-parser");
 const stream = require("stream");
+const findOrigin = require("./origins/index");
+const addHeaders = require("./origins/addHeaders");
+const guards = require("./origins/guards/index");
+const ensureLoggedIn = require("./origins/guards/ensureLoggedIn");
+
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
 
 let hook = function() {};
@@ -67,15 +72,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-function addHeader(req, res, next) {
-  if (res.headersSent) return next();
-  if (audience && req.user && req.user.token_type && req.user.access_token) {
-    req.headers["Authorization"] =
-      req.user.token_type + " " + req.user.access_token;
-  }
-  next();
-}
-
-app.use("/*", addHeader, proxy, hook);
+app.use("/*", findOrigin, ensureLoggedIn, guards, addHeaders, proxy, hook);
 
 app.listen(process.env.PORT);

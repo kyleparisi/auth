@@ -1,14 +1,20 @@
 const proxy = require("http-proxy-middleware");
 const logProvider = require("../providers/log");
 const error = require("../handlers/error");
-const findOrigin = require("../origins/index");
 
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 
-  const target = findOrigin(req, res, next);
+  const { domain, ip } = req.auth.config;
+  let target = false;
 
-  if (res.headersSent) return next();
+  if (domain) {
+    target = "https://" + domain;
+  }
+
+  if (ip) {
+    target = "http://" + ip;
+  }
 
   const upstream = proxy({
     target,

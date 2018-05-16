@@ -1,13 +1,15 @@
-var passport = require("passport");
-var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+const path = require("path");
+
+const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
+const db = low(adapter);
 
 module.exports = function() {
   const strategy = new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CONSUMER_KEY,
-      clientSecret: process.env.GOOGLE_CONSUMER_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL
-    },
+    db.get("strategies.google").value(),
     function(token, tokenSecret, profile, done) {
       return done(null, Object.assign({}, profile));
     }

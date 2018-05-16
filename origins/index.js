@@ -2,9 +2,7 @@ const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 const R = require("ramda");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
-const addHeaders = require("./addHeaders");
 const path = require("path");
-const ensureLoggedIn = require("connect-ensure-login");
 
 const originCache = {};
 const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
@@ -47,7 +45,7 @@ module.exports = function(req, res, next) {
       debug("Checking regex for: ", rules[i]);
       debug(regExp);
       if (host.match(regExp)) {
-        debug("Found match: %s", rules[i]);
+        debug("Found match: %s -> %j", rules[i], origins[rules[i]]);
         originCache[host] = origins[rules[i]];
         break;
       }
@@ -68,31 +66,11 @@ module.exports = function(req, res, next) {
 
   if (!origin) {
     debug("No origin found");
-    return false;
+    res.status(404).send("No origin found.");
+    return next();
   }
 
-  addHeaders(req, originCache[host]);
-
-  const guard = originCache[host].guard;
-  if (guard && Object.keys(guard).length) {
-    debug("Using guard strategy: %s", guard.strategy);
-    ensureLoggedIn.ensureLoggedIn({ redirectTo: "/auth/" + guard.strategy })(
-      req,
-      res,
-      next
-    );
-
-    let { emails } = req.user;
-    emails = emails.map(email => email.value);
-    const match = emails.diff(guard.emails);
-    if (!match.length) {
-      debug("No guard match found for user: %s", emails);
-      res.send(401, "Route guarded.  Unauthorized.");
-      return false;
-    }
-
-    debug("User guard match found: %s", emails);
-  }
-
-  return origin;
+  req.auth = req.auth || {};
+  req.auth.config = originCache[host];
+  return next();
 };
