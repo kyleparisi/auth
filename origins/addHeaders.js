@@ -5,7 +5,7 @@ module.exports = function(req, res, next) {
 
   if (!headers) {
     debug("No headers found for domain");
-    return false;
+    return next();
   }
 
   headers.forEach(function(item, index) {
