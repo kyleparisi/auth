@@ -1,6 +1,7 @@
 const proxy = require("http-proxy-middleware");
 const logProvider = require("../providers/log");
 const error = require("../handlers/error");
+const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
@@ -16,6 +17,7 @@ module.exports = function(req, res, next) {
     target = "http://" + ip;
   }
 
+  debug("Sending proxy request");
   const upstream = proxy({
     target,
     changeOrigin: true,
