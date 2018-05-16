@@ -4,7 +4,7 @@ module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 
   const guard = req.auth.config.guard;
-  if (!guard.length) {
+  if (!guard) {
     return next();
   }
 
