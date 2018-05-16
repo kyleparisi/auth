@@ -1,4 +1,4 @@
-const ensureLoggedIn = require("ensureLoggedIn");
+const ensureLoggedIn = require("connect-ensure-login");
 
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
