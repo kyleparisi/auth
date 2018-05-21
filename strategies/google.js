@@ -7,9 +7,9 @@ const path = require("path");
 const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
 const db = low(adapter);
 
-module.exports = function(req) {
+module.exports = function() {
   const googleStrategy = db.get("strategies.google").value();
-  googleStrategy.callbackUrl = req.host + "/auth/google/callback";
+  googleStrategy.callbackUrl = "/auth/google/callback";
 
   const strategy = new GoogleStrategy(googleStrategy, function(
     token,
