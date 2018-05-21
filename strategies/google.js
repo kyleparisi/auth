@@ -7,13 +7,20 @@ const path = require("path");
 const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
 const db = low(adapter);
 
-module.exports = function() {
-  const strategy = new GoogleStrategy(
-    db.get("strategies.google").value(),
-    function(token, tokenSecret, profile, done) {
-      return done(null, Object.assign({}, profile));
-    }
-  );
+module.exports = function(req) {
+  if (res.headersSent) return next();
+
+  const googleStrategy = db.get("strategies.google").value();
+  googleStrategy.callbackUrl = req.host + "/auth/google/callback";
+
+  const strategy = new GoogleStrategy(googleStrategy, function(
+    token,
+    tokenSecret,
+    profile,
+    done
+  ) {
+    return done(null, Object.assign({}, profile));
+  });
 
   passport.use(strategy);
 
