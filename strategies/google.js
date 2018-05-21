@@ -7,7 +7,7 @@ const path = require("path");
 const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
 const db = low(adapter);
 
-module.exports = function(req) {
+module.exports = function(req, res) {
   if (res.headersSent) return next();
 
   const googleStrategy = db.get("strategies.google").value();
