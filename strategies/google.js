@@ -9,7 +9,7 @@ const db = low(adapter);
 
 module.exports = function() {
   const googleStrategy = db.get("strategies.google").value();
-  googleStrategy.callbackUrl = "/auth/google/callback";
+  googleStrategy.callbackURL = "/auth/google/callback";
 
   const strategy = new GoogleStrategy(googleStrategy, function(
     token,
