@@ -1,3 +1,5 @@
+const R = require("ramda");
+
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 
