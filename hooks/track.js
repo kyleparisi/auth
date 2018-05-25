@@ -47,12 +47,11 @@ module.exports = function(req, res, next) {
       json: true,
       url
     },
-    function(error, data) {
+    function(error) {
       if (error) {
         debug("Error: " + error);
         return false;
       }
-      debug(data);
       debug("Hook success");
     }
   );
