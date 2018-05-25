@@ -2,7 +2,8 @@ require("./config/env");
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 try {
   require("./storage/db.json");
-} catch ($err) {
+} catch (err) {
+  console.log(err.message);
   debug("Please run administration first");
   process.exit(1);
 }
@@ -25,13 +26,9 @@ const addHeaders = require("./origins/addHeaders");
 const guards = require("./origins/guards/index");
 const ensureLoggedIn = require("./origins/guards/ensureLoggedIn");
 const proxy = require("./proxies/standard");
+const hook = require("./hooks/track");
 
 const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
-
-let hook = function() {};
-if (process.env.HOOK_NAME) {
-  hook = require("./hooks/" + process.env.HOOK_NAME);
-}
 
 debug("Using auth strategy: %s", authStrategy);
 debug("Using session driver: %s", sessionDriver);

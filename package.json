@@ -15,13 +15,12 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "http-proxy-middleware": "^0.17.4",
-    "identity": "github:kyleparisi/identity",
     "lowdb": "^1.0.0",
     "passport": "^0.4.0",
     "passport-auth0": "^0.6.1",
     "passport-google-oauth": "^1.0.0",
     "ramda": "^0.25.0",
-    "track": "github:kyleparisi/track"
+    "request": "^2.87.0"
   },
   "devDependencies": {
     "body-parser": "^1.18.3",
