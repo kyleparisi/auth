@@ -28,7 +28,7 @@ module.exports = function(req, res, next) {
   data.message = res.statusMessage;
   data.proxy_status = R.path(["proxyRes", "statusCode"], res);
   data.proxy_message = R.path(["proxyRes", "statusMessage"], res);
-  data.user_id = req.user._json.sub;
+  data.user_id = R.pathOr(0, ["user", "_json", "sub"], req);
   data.path = req.path;
 
   let url = db.get("track.url").value();
