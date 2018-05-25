@@ -37,7 +37,7 @@ module.exports = function(req, res, next) {
     return false;
   }
 
-  url = "http://" + url + "/" + req.host.replace(".", "-") + "/_doc";
+  url = "http://" + url + "/" + req.host.replace(/\./g, "-") + "/_doc";
   debug("Sending track data to: %s", url);
 
   request(
