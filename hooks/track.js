@@ -30,7 +30,6 @@ module.exports = function(req, res, next) {
   data.proxy_message = R.path(["proxyRes", "statusMessage"], res);
   data.user_id = R.pathOr(0, ["user", "_json", "sub"], req);
   data.path = req.path;
-  data.ip = req.ip;
 
   let url = db.get("track.url").value();
   if (!url) {
