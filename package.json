@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "aws-sdk": "^2.245.1",
+    "body-parser": "^1.18.3",
     "connect-dynamodb": "^2.0.0",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
@@ -19,15 +20,14 @@
     "passport": "^0.4.0",
     "passport-auth0": "^0.6.1",
     "passport-google-oauth": "^1.0.0",
+    "pug": "^2.0.3",
     "ramda": "^0.25.0",
     "request": "^2.87.0"
   },
   "devDependencies": {
-    "body-parser": "^1.18.3",
     "husky": "^0.14.3",
     "prettier": "1.9.2",
-    "pretty-quick": "^1.6.0",
-    "pug": "^2.0.3"
+    "pretty-quick": "^1.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

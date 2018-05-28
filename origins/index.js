@@ -19,6 +19,8 @@ Array.prototype.diff = function(arr2) {
 };
 
 module.exports = function(req, res, next) {
+  if (res.headersSent) return next();
+
   const host = req.headers["host"];
   const origins = db.get("origins").value();
   const rules = Object.keys(origins);
