@@ -1,14 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const nocache = require("./nocache");
+const bodyParser = require("body-parser");
+const passport = require("passport");
 
 router.get("/status", nocache, function(req, res) {
   res.sendStatus(200);
 });
 
-router.get("/login", nocache, function(req, res) {
-  res.end("No auth strategy configured.");
+router.get("/signup", nocache, function(req, res) {
+  res.render("signup", { message: { error: "" }, user: { email: "" } });
 });
+
+router.post(
+  "/signup",
+  nocache,
+  bodyParser.urlencoded({ extended: true }),
+  passport.authenticate("local-signup", { failureRedirect: "/signup" })
+);
 
 router.get("/logout", nocache, function(req, res) {
   req.logout();

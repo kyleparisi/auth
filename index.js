@@ -1,22 +1,29 @@
 require("./config/env");
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
+let db;
 try {
-  require("./storage/db.json");
+  db = require("./storage/db.json");
 } catch (err) {
   console.log(err.message);
   debug("Please run administration first");
   process.exit(1);
 }
 global.debug = debug;
+const R = require("ramda");
 const express = require("express");
 const authStrategy = "google";
 const auth = require("./strategies/" + authStrategy);
+const localAuth = require("./strategies/local-dynamodb");
 const routesAuth = require("./routes/auth");
 const routesGoogle = require("./routes/google");
 const routesApiUser = require("./routes/api/user");
 const flash = require("connect-flash");
 const failure = require("./handlers/failure");
-const sessionDriver = process.env.SESSION_DRIVER;
+const sessionDriver = R.pathOr(
+  process.env.SESSION_DRIVER,
+  ["session", "driver"],
+  db
+);
 const session = require("./sessions/" + sessionDriver);
 const audience = process.env.AUTH0_AUDIENCE;
 const bodyParser = require("body-parser");
@@ -38,7 +45,10 @@ audience
 debug("Listening on port: %s", process.env.PORT);
 
 const strategy = auth();
+const localStrategy = localAuth();
 const app = express();
+app.set("view engine", "pug");
+app.set("views", "./routes/views");
 app.use(function(req, res, next) {
   req.start = new Date().toString();
   next();
@@ -46,6 +56,15 @@ app.use(function(req, res, next) {
 app.use(session);
 app.use(flash());
 app.use(failure);
+if (originIsAwsDomain) app.use(proxy.getCredentials);
+
+app.use(strategy.initialize());
+app.use(strategy.session());
+app.use(localStrategy.initialize());
+app.use(localStrategy.session());
+
+app.use("/", routesAuth, routesGoogle);
+app.use("/api", routesApiUser);
 app.use(
   bodyParser.raw({
     type: function() {
@@ -53,11 +72,6 @@ app.use(
     }
   })
 );
-if (originIsAwsDomain) app.use(proxy.getCredentials);
-app.use(strategy.initialize());
-app.use(strategy.session());
-app.use("/", routesAuth, routesGoogle);
-app.use("/api", routesApiUser);
 app.use(function(req, res, next) {
   if (Buffer.isBuffer(req.body)) {
     let bufferStream = new stream.PassThrough();

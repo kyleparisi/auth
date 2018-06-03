@@ -12,6 +12,7 @@ module.exports = function(req, res, next) {
   if (!emails) {
     debug("No req emails found for user.");
     res.status(401).send("Route guarded.  Unauthorized.");
+    return next();
   }
   emails = emails.map(email => email.value);
   const match = emails.diff(guard.emails);
