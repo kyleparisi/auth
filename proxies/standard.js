@@ -2,6 +2,7 @@ const proxy = require("http-proxy-middleware");
 const logProvider = require("../providers/log");
 const error = require("../handlers/error");
 const debug = require("debug")(process.env.DEBUG_NAMESPACE);
+const url = require("url");
 
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
@@ -10,10 +11,18 @@ module.exports = function(req, res, next) {
   let target = false;
 
   if (domain) {
-    target = "https://" + domain;
+    target = domain;
   }
 
   if (ip) {
+    target = ip;
+  }
+
+  if (domain && !url.parse(domain).protocol) {
+    target = "https://" + domain;
+  }
+
+  if (ip && !url.parse(ip).protocol) {
     target = "http://" + ip;
   }
 
@@ -22,7 +31,6 @@ module.exports = function(req, res, next) {
     target,
     changeOrigin: true,
     ws: true,
-    buffer: req.bufferStream,
     logLevel: process.env.LOG_LEVEL,
     logProvider: logProvider,
     onError: error,
