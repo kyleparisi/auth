@@ -3,6 +3,7 @@ const R = require("ramda");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const path = require("path");
+const url = require("url");
 
 const originCache = {};
 const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
@@ -32,11 +33,14 @@ module.exports = function(req, res, next) {
 
   if (originCache[host]) {
     debug("Using cached host: %j", originCache[host]);
-    if (originCache[host].ip) {
+    if (originCache[host].ip && !url.parse(originCache[host].ip).protocol) {
       origin = "http://" + originCache[host].ip;
     }
 
-    if (originCache[host].domain) {
+    if (
+      originCache[host].domain &&
+      !url.parse(originCache[host].domain).protocol
+    ) {
       origin = "https://" + originCache[host].domain;
     }
   }
@@ -54,13 +58,14 @@ module.exports = function(req, res, next) {
     }
 
     const ip = R.path([host, "ip"], originCache);
-    if (ip) {
+    const domain = R.path([host, "domain"], originCache);
+    origin = ip || domain;
+
+    if (ip && !url.parse(ip).protocol) {
       origin = "http://" + ip;
       debug("Using origin: %s", origin);
     }
-
-    const domain = R.path([host, "domain"], originCache);
-    if (domain) {
+    if (domain && !url.parse(domain).protocol) {
       origin = "https://" + domain;
       debug("Using origin: %s", origin);
     }
