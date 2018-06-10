@@ -5,6 +5,8 @@ module.exports = function(req, res, next) {
 
   const { headers } = req.auth.config;
 
+  req.headers["x-user-id"] = req.user.id;
+
   if (!headers) {
     debug("No headers found for domain");
     return next();

@@ -26,16 +26,12 @@ const sessionDriver = R.pathOr(
 );
 const session = require("./sessions/" + sessionDriver);
 const audience = process.env.AUTH0_AUDIENCE;
-const bodyParser = require("body-parser");
-const stream = require("stream");
 const findOrigin = require("./origins/index");
 const addHeaders = require("./origins/addHeaders");
 const guards = require("./origins/guards/index");
 const ensureLoggedIn = require("./origins/guards/ensureLoggedIn");
 const proxy = require("./proxies/standard");
 const hook = require("./hooks/track");
-
-const originIsAwsDomain = process.env.ORIGIN.search("amazonaws.com") !== -1;
 
 debug("Using auth strategy: %s", authStrategy);
 debug("Using session driver: %s", sessionDriver);
@@ -56,8 +52,6 @@ app.use(function(req, res, next) {
 app.use(session);
 app.use(flash());
 app.use(failure);
-if (originIsAwsDomain) app.use(proxy.getCredentials);
-
 app.use(strategy.initialize());
 app.use(strategy.session());
 app.use(localStrategy.initialize());
@@ -65,23 +59,6 @@ app.use(localStrategy.session());
 
 app.use("/", routesAuth, routesGoogle);
 app.use("/api", routesApiUser);
-app.use(
-  bodyParser.raw({
-    type: function() {
-      return true;
-    }
-  })
-);
-app.use(function(req, res, next) {
-  if (Buffer.isBuffer(req.body)) {
-    let bufferStream = new stream.PassThrough();
-    bufferStream.end(req.body);
-    req.bufferStream = bufferStream;
-  }
-
-  next();
-});
-
 app.use("/*", findOrigin, ensureLoggedIn, guards, addHeaders, proxy, hook);
 
 app.listen(process.env.PORT);
