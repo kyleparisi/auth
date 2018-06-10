@@ -42,6 +42,7 @@ module.exports = function(req, res, next) {
     if (domain && !url.parse(domain).protocol) {
       origin = "https://" + domain;
     }
+    debug("Using origin: %s", origin);
   }
 
   if (!origin) {
