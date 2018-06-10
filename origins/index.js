@@ -63,12 +63,11 @@ module.exports = function(req, res, next) {
 
     if (ip && !url.parse(ip).protocol) {
       origin = "http://" + ip;
-      debug("Using origin: %s", origin);
     }
     if (domain && !url.parse(domain).protocol) {
       origin = "https://" + domain;
-      debug("Using origin: %s", origin);
     }
+    debug("Using origin: %s", origin);
   }
 
   if (!origin) {
