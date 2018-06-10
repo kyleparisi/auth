@@ -26,7 +26,7 @@ module.exports = function(req, res, next) {
     target = "http://" + ip;
   }
 
-  debug("Sending proxy request");
+  debug("Sending proxy request to: %s", target);
   const upstream = proxy({
     target,
     changeOrigin: true,
