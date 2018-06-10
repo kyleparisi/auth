@@ -3,10 +3,11 @@ const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 
+  if (req.user) {
+    req.headers["x-user-id"] = req.user.id;
+  }
+
   const { headers } = req.auth.config;
-
-  req.headers["x-user-id"] = req.user.id;
-
   if (!headers) {
     debug("No headers found for domain");
     return next();
