@@ -33,15 +33,14 @@ module.exports = function(req, res, next) {
 
   if (originCache[host]) {
     debug("Using cached host: %j", originCache[host]);
-    if (originCache[host].ip && !url.parse(originCache[host].ip).protocol) {
-      origin = "http://" + originCache[host].ip;
+    const { domain, ip } = originCache[host];
+    origin = ip || domain;
+    if (ip && !url.parse(ip).protocol) {
+      origin = "http://" + ip;
     }
 
-    if (
-      originCache[host].domain &&
-      !url.parse(originCache[host].domain).protocol
-    ) {
-      origin = "https://" + originCache[host].domain;
+    if (domain && !url.parse(domain).protocol) {
+      origin = "https://" + domain;
     }
   }
 
