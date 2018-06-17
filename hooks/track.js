@@ -13,6 +13,10 @@ module.exports = function(req, res, next) {
     return;
   }
 
+  if (req.path === "/status") {
+    return;
+  }
+
   debug("Setting up track data.");
 
   const start = new Date(req.start);
