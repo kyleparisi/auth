@@ -9,6 +9,7 @@ module.exports = function(req, res, next) {
 
   const { domain, ip } = req.auth.config;
   let target = false;
+  let changeOrigin = false;
 
   if (domain) {
     target = domain;
@@ -19,6 +20,7 @@ module.exports = function(req, res, next) {
   }
 
   if (domain && !url.parse(domain).protocol) {
+    changeOrigin = true;
     target = "https://" + domain;
   }
 
@@ -29,7 +31,7 @@ module.exports = function(req, res, next) {
   debug("Sending proxy request to: %s", target);
   const upstream = proxy({
     target,
-    changeOrigin: true,
+    changeOrigin,
     ws: true,
     logLevel: process.env.LOG_LEVEL,
     logProvider: logProvider,
