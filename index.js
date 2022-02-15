@@ -5,7 +5,7 @@ try {
   db = require("./storage/db.json");
 } catch (err) {
   console.log(err.message);
-  debug("Please run administration first");
+  debug("Please run administration first: npm run start:admin");
   process.exit(1);
 }
 global.debug = debug;
