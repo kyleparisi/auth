@@ -61,4 +61,8 @@ app.use("/", routesAuth, routesGoogle);
 app.use("/api", routesApiUser);
 app.use("/*", findOrigin, ensureLoggedIn, guards, addHeaders, proxy, hook);
 
-app.listen(process.env.PORT);
+if (process.env.JEST_WORKER_ID !== undefined) {
+  app.listen(process.env.PORT);
+}
+
+module.exports = app;
