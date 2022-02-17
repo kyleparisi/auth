@@ -1,7 +1,6 @@
 const proxy = require("http-proxy-middleware");
 const logProvider = require("../providers/log");
 const error = require("../handlers/error");
-const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 const url = require("url");
 
 module.exports = function(req, res, next) {
@@ -19,6 +18,7 @@ module.exports = function(req, res, next) {
     target = ip;
   }
 
+  console.log(new URL(domain));
   if (domain && !url.parse(domain).protocol) {
     changeOrigin = true;
     target = "https://" + domain;

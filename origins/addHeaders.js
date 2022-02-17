@@ -1,5 +1,3 @@
-const debug = require("debug")(process.env.DEBUG_NAMESPACE);
-
 module.exports = function(req, res, next) {
   if (res.headersSent) return next();
 

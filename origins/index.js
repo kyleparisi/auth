@@ -1,13 +1,8 @@
-const debug = require("debug")(process.env.DEBUG_NAMESPACE);
 const R = require("ramda");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
-const path = require("path");
+const _ = require("lodash");
 const url = require("url");
 
 const originCache = {};
-const adapter = new FileSync(path.join(__dirname, "/../storage/db.json"));
-const db = low(adapter);
 
 Array.prototype.diff = function(arr2) {
   var ret = [];
@@ -19,64 +14,66 @@ Array.prototype.diff = function(arr2) {
   return ret;
 };
 
-module.exports = function(req, res, next) {
-  if (res.headersSent) return next();
+module.exports = function(db) {
+  return function(req, res, next) {
+    if (res.headersSent) return next();
 
-  const host = req.headers["host"];
-  const origins = db.get("origins").value();
-  const rules = Object.keys(origins);
+    const host = req.headers["host"];
+    const origins = _.get(db, "origins");
+    const rules = Object.keys(origins);
 
-  debug("Finding origin based on host: %s", host);
-  debug("Rules available: %s", rules);
+    debug("Finding origin based on host: %s", host);
+    debug("Rules available: %s", rules);
 
-  let origin = false;
+    let origin = false;
 
-  if (originCache[host]) {
-    debug("Using cached host: %j", originCache[host]);
-    const { domain, ip } = originCache[host];
-    origin = ip || domain;
-    if (ip && !url.parse(ip).protocol) {
-      origin = "http://" + ip;
-    }
-
-    if (domain && !url.parse(domain).protocol) {
-      origin = "https://" + domain;
-    }
-    debug("Using origin: %s", origin);
-  }
-
-  if (!origin) {
-    for (let i = 0; i < rules.length; i++) {
-      const regExp = new RegExp(rules[i]);
-      debug("Checking regex for: ", rules[i]);
-      debug(regExp);
-      if (host.match(regExp)) {
-        debug("Found match: %s -> %j", rules[i], origins[rules[i]]);
-        originCache[host] = origins[rules[i]];
-        break;
+    if (originCache[host]) {
+      debug("Using cached host: %j", originCache[host]);
+      const { domain, ip } = originCache[host];
+      origin = ip || domain;
+      if (ip && !url.parse(ip).protocol) {
+        origin = "http://" + ip;
       }
+
+      if (domain && !url.parse(domain).protocol) {
+        origin = "https://" + domain;
+      }
+      debug("Using origin: %s", origin);
     }
 
-    const ip = R.path([host, "ip"], originCache);
-    const domain = R.path([host, "domain"], originCache);
-    origin = ip || domain;
+    if (!origin) {
+      for (let i = 0; i < rules.length; i++) {
+        const regExp = new RegExp(rules[i]);
+        debug("Checking regex for: ", rules[i]);
+        debug(regExp);
+        if (host.match(regExp)) {
+          debug("Found match: %s -> %j", rules[i], origins[rules[i]]);
+          originCache[host] = origins[rules[i]];
+          break;
+        }
+      }
 
-    if (ip && !url.parse(ip).protocol) {
-      origin = "http://" + ip;
-    }
-    if (domain && !url.parse(domain).protocol) {
-      origin = "https://" + domain;
-    }
-    debug("Using origin: %s", origin);
-  }
+      const ip = R.path([host, "ip"], originCache);
+      const domain = R.path([host, "domain"], originCache);
+      origin = ip || domain;
 
-  if (!origin) {
-    debug("No origin found");
-    res.status(404).send("No origin found.");
+      if (ip && !url.parse(ip).protocol) {
+        origin = "http://" + ip;
+      }
+      if (domain && !url.parse(domain).protocol) {
+        origin = "https://" + domain;
+      }
+      debug("Using origin: %s", origin);
+    }
+
+    if (!origin) {
+      debug("No origin found");
+      res.status(404).send("No origin found.");
+      return next();
+    }
+
+    req.auth = req.auth || {};
+    req.auth.config = originCache[host];
     return next();
-  }
-
-  req.auth = req.auth || {};
-  req.auth.config = originCache[host];
-  return next();
+  };
 };

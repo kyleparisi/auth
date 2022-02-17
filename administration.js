@@ -1,8 +1,8 @@
 const express = require("express");
 const path = require("path");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
 const bodyParser = require("body-parser");
+const fs = require("fs");
+const _ = require("lodash");
 
 const app = express();
 app.use(
@@ -10,10 +10,7 @@ app.use(
     extended: true
   })
 );
-
-const adapter = new FileSync(path.join(__dirname, "/storage/db.json"));
-const db = low(adapter);
-db.defaults({ origins: {} }).write();
+db_path = path.join(__dirname, "/storage/db.json");
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "/administration"));
@@ -23,7 +20,10 @@ app.get("/", (req, res) =>
 );
 
 app.get("/origins", (req, res) => {
-  res.render("origins", { origins: db.get("origins").value() });
+  const db_buffer = fs.readFileSync(db_path);
+  const db = JSON.parse(db_buffer.toString());
+  console.log(_.get(db, "origins"));
+  res.render("origins", { origins: _.get(db, "origins") });
 });
 
 app.post("/origins/save", (req, res) => {
@@ -32,10 +32,18 @@ app.post("/origins/save", (req, res) => {
 
   headers = headers.filter(header => (header ? header : false));
 
-  db
-    .set(`origins.["${regex_key}"]`, { domain, ip, headers, guard_emails })
-    .write();
-  console.log(req.body);
+  let db_buffer = fs.readFileSync(db_path);
+  let db = JSON.parse(db_buffer.toString());
+  _.set(db, "session", { driver: "memory" });
+  _.set(db, "strategies", {
+    google: {
+      clientID: "abc",
+      clientSecret: "def"
+    }
+  });
+  _.set(db, `origins.["${regex_key}"]`, { domain, ip, headers, guard_emails });
+  fs.writeFileSync(db_path, JSON.stringify(db, null, 2));
+  console.log(req.body, db);
   res.redirect("/");
 });
 
