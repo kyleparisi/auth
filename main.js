@@ -5,7 +5,6 @@ const failure = require("./handlers/failure");
 const routesAuth = require("./routes/auth");
 const routesGoogle = require("./routes/google");
 const routesApiUser = require("./routes/api/user");
-const routesHealthz = require("./routes/api/healthz");
 const findOrigin = require("./origins");
 const ensureLoggedIn = require("./origins/guards/ensureLoggedIn");
 const guards = require("./origins/guards");
@@ -46,7 +45,7 @@ function main(db) {
   app.use(localStrategy.session());
 
   app.use("/", routesAuth, routesGoogle);
-  app.use("/api", routesApiUser, routesHealthz);
+  app.use("/api", routesApiUser);
   app.use(
     "/*",
     findOrigin(db),

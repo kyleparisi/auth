@@ -47,10 +47,10 @@ test("starts", () => {
   expect(app).toBeDefined();
 });
 
-test("/api/healthz", done => {
+test("[GET] /status", done => {
   const app = main(defaultConfig);
   request(app)
-    .get("/api/healthz")
+    .get("/status")
     .expect(200)
     .end(function(err, res) {
       if (err) throw err;
@@ -58,7 +58,7 @@ test("/api/healthz", done => {
     });
 });
 
-test("/api/user requires login", done => {
+test("[GET] /api/user requires login", done => {
   const app = main(defaultConfig);
   request(app)
     .get("/api/user")
@@ -70,7 +70,7 @@ test("/api/user requires login", done => {
     });
 });
 
-test("/api/user/id requires login", done => {
+test("[GET] /api/user/id requires login", done => {
   const app = main(defaultConfig);
   request(app)
     .get("/api/user/id")
@@ -78,6 +78,18 @@ test("/api/user/id requires login", done => {
     .expect("Location", "/login")
     .end(function(err, res) {
       if (err) throw err;
+      done();
+    });
+});
+
+test("[GET] /signup", done => {
+  const app = main(defaultConfig);
+  request(app)
+    .get("/signup")
+    .expect(200)
+    .end(function(err, res) {
+      if (err) throw err;
+      expect(res.text).toEqual(expect.stringContaining("Login"));
       done();
     });
 });
