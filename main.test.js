@@ -82,14 +82,38 @@ test("[GET] /api/user/id requires login", done => {
     });
 });
 
-test("[GET] /signup", done => {
+test("[GET] /logout", done => {
   const app = main(defaultConfig);
   request(app)
-    .get("/signup")
-    .expect(200)
+    .get("/logout")
+    .expect(302)
+    .expect("Location", "/login")
     .end(function(err, res) {
       if (err) throw err;
-      expect(res.text).toEqual(expect.stringContaining("Login"));
       done();
     });
+});
+
+test("[GET] /auth/google", done => {
+  const app = main(defaultConfig);
+  request(app)
+    .get("/auth/google")
+    .expect(302)
+    .end(function(err, res) {
+      if (err) throw err;
+      expect(res.headers.location).toContain("accounts.google.com");
+      done();
+    });
+});
+
+xtest("[GET] /auth/google/callback", () => {
+  // todo: figure out how to test this
+});
+
+xtest("[GET] /api/user", done => {
+  // todo: figure out how to test this
+});
+
+xtest("[GET] /api/user/id", done => {
+  // todo: figure out how to test this
 });

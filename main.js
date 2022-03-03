@@ -11,7 +11,6 @@ const guards = require("./origins/guards");
 const addHeaders = require("./origins/addHeaders");
 const proxy = require("./proxies/standard");
 const hook = require("./hooks/track");
-const localAuth = require("./strategies/local-dynamodb");
 
 function main(db) {
   if (!db) {
@@ -28,10 +27,7 @@ function main(db) {
   const auth = require("./strategies/" + authStrategy);
   const strategy = auth(db);
 
-  const localStrategy = localAuth();
   const app = express();
-  app.set("view engine", "pug");
-  app.set("views", "./routes/views");
   app.use(function(req, res, next) {
     req.start = new Date().toString();
     next();
@@ -41,8 +37,6 @@ function main(db) {
   app.use(failure);
   app.use(strategy.initialize());
   app.use(strategy.session());
-  app.use(localStrategy.initialize());
-  app.use(localStrategy.session());
 
   app.use("/", routesAuth, routesGoogle);
   app.use("/api", routesApiUser);
