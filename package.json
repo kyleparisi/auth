@@ -38,7 +38,7 @@
     "test": "jest",
     "start": "node -r ./config/env index.js",
     "start:admin": "node administration.js",
-    "precommit": "pretty-quick --staged"
+    "precommit": "pretty-quick --staged && npm run test"
   },
   "author": "Kyle Parisi (http://blog.kyleparisi.com)",
   "license": "ISC"
