@@ -1,5 +1,4 @@
 const index = require("./index");
-const { next } = require("lodash/seq");
 
 const defaultConfig = {
   session: {
