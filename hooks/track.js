@@ -1,5 +1,4 @@
 const request = require("request");
-const debug = require("debug")(process.env.DEBUG_NAMESPACE + ":track");
 const R = require("ramda");
 const _ = require("lodash");
 
@@ -7,7 +6,7 @@ module.exports = function(db) {
   return function(req, res, next) {
     let url = _.get(db, "track.url");
     if (!url) {
-      debug("No track url to send.");
+      global.debug("No track url to send.");
       return false;
     }
 
@@ -19,7 +18,7 @@ module.exports = function(db) {
       return;
     }
 
-    debug("Setting up track data.");
+    global.debug("Setting up track data.");
 
     const start = new Date(req.start);
     const now = new Date();
@@ -38,7 +37,7 @@ module.exports = function(db) {
     data.path = req.path;
 
     url = "http://" + url + "/" + req.hostname.replace(/\./g, "-") + "/_doc";
-    debug("Sending track data to: %s", url);
+    global.debug("Sending track data to: %s", url);
 
     request(
       {
@@ -49,10 +48,10 @@ module.exports = function(db) {
       },
       function(error) {
         if (error) {
-          debug("Error: " + error);
+          global.debug("Error: " + error);
           return false;
         }
-        debug("Hook success");
+        global.debug("Hook success");
       }
     );
 
