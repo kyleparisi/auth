@@ -5,6 +5,12 @@ const _ = require("lodash");
 
 module.exports = function(db) {
   return function(req, res, next) {
+    let url = _.get(db, "track.url");
+    if (!url) {
+      debug("No track url to send.");
+      return false;
+    }
+
     if (req.path.search(/\./) !== -1) {
       return;
     }
@@ -30,12 +36,6 @@ module.exports = function(db) {
     data.proxy_message = R.path(["proxyRes", "statusMessage"], res);
     data.user_id = R.pathOr(0, ["user", "_json", "sub"], req);
     data.path = req.path;
-
-    let url = _.get(db, "track.url");
-    if (!url) {
-      debug("No track url to send.");
-      return false;
-    }
 
     url = "http://" + url + "/" + req.hostname.replace(/\./g, "-") + "/_doc";
     debug("Sending track data to: %s", url);

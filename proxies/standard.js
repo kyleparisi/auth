@@ -18,7 +18,6 @@ module.exports = function(req, res, next) {
     target = ip;
   }
 
-  console.log(new URL(domain));
   if (domain && !url.parse(domain).protocol) {
     changeOrigin = true;
     target = "https://" + domain;
