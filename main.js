@@ -23,6 +23,7 @@ function main(db) {
   );
   const session = require("./sessions/" + sessionDriver);
 
+  // todo: google is only supported atm, maybe add the others back
   const authStrategy = "google";
   const auth = require("./strategies/" + authStrategy);
   const strategy = auth(db);
