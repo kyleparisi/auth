@@ -37,6 +37,9 @@ exports.proxy = function(req, res, next) {
       request.path = proxyReq.path;
       request.region = "us-east-1";
       if (Buffer.isBuffer(req.body)) request.body = req.body;
+      if (Object.keys(req.body).length > 0) {
+        request.body = JSON.stringify(req.body);
+      }
       if (!request.headers) request.headers = {};
       request.headers["presigned-expires"] = false;
       request.headers["Host"] = ORIGIN;
@@ -52,6 +55,9 @@ exports.proxy = function(req, res, next) {
           "x-amz-security-token",
           request.headers["x-amz-security-token"]
         );
+      if (Object.keys(req.body).length > 0) {
+        proxyReq.write(JSON.stringify(req.body));
+      }
     },
     onProxyRes: function(proxyRes, req, res) {
       res.proxyRes = proxyRes;

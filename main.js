@@ -9,8 +9,9 @@ const findOrigin = require("./origins");
 const ensureLoggedIn = require("./origins/guards/ensureLoggedIn");
 const guards = require("./origins/guards");
 const addHeaders = require("./origins/addHeaders");
-const proxy = require("./proxies/standard");
+const {proxy} = require("./proxies/aws");
 const hook = require("./hooks/track");
+const bodyParser = require('body-parser');
 
 function main(db) {
   if (!db) {
@@ -35,6 +36,7 @@ function main(db) {
   });
   app.use(session);
   app.use(flash());
+  app.use(bodyParser.json());
   app.use(failure);
   app.use(strategy.initialize());
   app.use(strategy.session());
