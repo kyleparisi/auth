@@ -7,7 +7,7 @@ A simple auth middleware server.
 Local:
 
 ```bash
-# Configure your env
+# Configure your env (optional)
 cp .env.example .env
 npm i
 npm start
