@@ -20,10 +20,12 @@ exports.getCredentials = function(req, res, next) {
 
 exports.proxy = function(req, res, next) {
   if (res.headersSent) return next();
-  const ORIGIN = url.parse(process.env.ORIGIN).hostname;
+  const { domain, ip } = req.auth.config;
+  const origin = ip || domain;
+  const HOSTNAME = url.parse(origin).hostname;
 
   const upstream = proxy({
-    target: process.env.ORIGIN,
+    target: origin,
     changeOrigin: true,
     ws: true,
     logLevel: process.env.LOG_LEVEL,
@@ -31,7 +33,7 @@ exports.proxy = function(req, res, next) {
     onError: error,
     buffer: req.bufferStream,
     onProxyReq: function(proxyReq, req) {
-      var endpoint = new AWS.Endpoint(ORIGIN);
+      var endpoint = new AWS.Endpoint(HOSTNAME);
       var request = new AWS.HttpRequest(endpoint);
       request.method = proxyReq.method;
       request.path = proxyReq.path;
@@ -42,7 +44,7 @@ exports.proxy = function(req, res, next) {
       }
       if (!request.headers) request.headers = {};
       request.headers["presigned-expires"] = false;
-      request.headers["Host"] = ORIGIN;
+      request.headers["Host"] = HOSTNAME;
 
       var signer = new AWS.Signers.V4(request, "es");
       signer.addAuthorization(credentials, new Date());
