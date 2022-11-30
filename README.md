@@ -10,6 +10,7 @@ Local:
 # Configure your env (optional)
 cp .env.example .env
 npm i
+# Configure the app ./storage/db.json
 npm start
 # open localhost:3000
 ```
